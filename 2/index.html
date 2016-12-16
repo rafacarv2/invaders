@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Space Invaders</title>
+        <style>
+            @font-face {
+                font-family: 'ps2';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Press Start 2P'), local('PressStart2P-Regular'), url(http://themes.googleusercontent.com/static/fonts/pressstart2p/v2/8Lg6LX8-ntOHUQnvQ0E7o3dD2UuwsmbX3BOp4SL_VwM.woff) format('woff');
+            }
+            /* Styling needed for a fullscreen canvas and no scrollbars. */
+            body, html { 
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            #starfield {
+                width:100%;
+                height:100%;
+                z-index: -1;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+            }
+            #gamecontainer {
+                width: 1280px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #gamecanvas { 
+                width: 1280px;
+                height: 720px;
+            }
+            #info {
+                width: 1280px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #comandos{bottom:0}
+        </style>
+        <link rel="stylesheet" type="text/css" href="css/core.css">
+        <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="css/typeography.css">
+        <script>
+            (function(i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function() {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+            ga('create', 'UA-52529755-1', 'auto');
+            ga('send', 'pageview');
+
+        </script>
+    </head>
+    <body style="background-color: #000;">
+        <!--<h1>oi</h1>-->
+        <audio preload="auto" id="audio">
+            <source src="../sounds/corneria.mp3" type="audio/mpeg" />
+        </audio>
+        <audio preload="auto" id="gameover">
+            <source src="../sounds/dead.mp3" type="audio/mpeg" />
+        </audio>
+        <div id="starfield"></div>
+        <div id="gamecontainer">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+        <script src="js/starfield.js"></script>
+        <script src="js/spaceinvaders_1.js"></script>
+        <script>
+
+            //  Cria as estrelas
+
+            var container = document.getElementById('starfield');
+            var starfield = new Starfield();
+            starfield.initialise(container);
+            starfield.start();
+
+            //  Setup the canvas.
+            var canvas = document.getElementById("gameCanvas");
+            canvas.width = 1280;
+            canvas.height = 720;
+            //Cria a spritesheet
+            var invaderIMG = new Image();
+            invaderIMG.src = "../img/invadersSD.png";
+            //frames de controle
+            var frame_invader = 0;
+            var frame_hit = 0;
+            var frame_power = 0;
+//            var framemove_nave = 0;
+            //  Create the game.
+            var game = new Game();
+
+            //  Initialise it with the game canvas.
+            game.initialise(canvas);
+
+            //  Start the game.
+            game.start();
+
+            //  Listen for keyboard events.
+            window.addEventListener("keydown", function keydown(e) {
+                var keycode = e.which || window.event.keycode;
+                //  Supress further processing of left/right/space (37/29/32)
+                if (keycode == 37 || keycode == 39 || keycode == 32) {
+                    e.preventDefault();
+                }
+                game.keyDown(keycode);
+            });
+            window.addEventListener("keyup", function keydown(e) {
+                var keycode = e.which || window.event.keycode;
+                game.keyUp(keycode);
+            });
+
+            function toggleMute() {
+                game.mute();
+                document.getElementById("muteLink").innerText = game.sounds.mute ? "unmute" : "mute";
+            }
+        </script>
+        <p id="comandos">Comandos: <br />Espaço - Atirar  |  P - Pausa<br />< e > - Mover</p>
+    </body>
+</html>
